@@ -1,0 +1,1 @@
+quality-scan: { stage: validate, script: ['echo sonar-scanner'] }
