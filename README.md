@@ -111,3 +111,65 @@ This cumulative V29 extends V18 with day-2 operations and release engineering:
 - reset / destroy / rebuild scripts
 - release packaging and local CI helper
 - operational readiness and recovery documentation
+
+---
+
+# Kubernetes The Hard Way with Vagrant — Architect Edition V39
+
+La **V39** est l'aboutissement cumulatif de toutes les versions précédentes. Elle conserve intégralement le socle V29 (shell, PKI, etcd, control plane, workers, OIDC, Keycloak, bastion, RBAC, audit) et y ajoute des couches d'industrialisation complètes.
+
+## Parcours disponibles en V39
+
+| Parcours | Description | Répertoire principal |
+| :--- | :--- | :--- |
+| **Shell** | Construction manuelle composant par composant (KTHW original) | `scripts/` |
+| **Ansible** | Déploiement déclaratif et idempotent | `ansible/` |
+| **AWX** | Orchestration d'entreprise avec interface web | `awx/` |
+| **GitLab CI** | Pipeline de lint, validation et packaging | `.gitlab-ci.yml`, `gitlab/ci/` |
+| **Observability** | Prometheus + Grafana (métriques) | `observability/`, `kubernetes/manifests/observability/` |
+| **Logging** | Loki + Promtail (logs centralisés) | `logging/`, `kubernetes/manifests/logging/` |
+| **Quality** | SonarQube + Quality Gates | `sonarqube/` |
+| **OpenShift** | Mapping K8s vanilla → OpenShift/OKD | `openshift/` |
+| **GitOps** | Argo CD + App-of-Apps | `gitops/` |
+| **Policy** | Kyverno (governance et sécurité) | `policy/` |
+
+## Démarrage rapide
+
+### Parcours Shell (KTHW classique)
+```bash
+./scripts/00-check-prereqs.sh
+./scripts/26-build-platform.sh
+```
+
+### Parcours Ansible
+```bash
+cd ansible
+ansible-playbook -i inventories/vagrant/hosts.ini playbooks/build-platform.yml
+```
+
+## Carte du dépôt V39
+
+- `docs/00-vision` : vision, executive summary, carte du dépôt
+- `docs/01-architecture` : architecture globale, OpenShift mapping
+- `docs/02-concepts` : synthèses par domaine, K8s vs OpenShift
+- `docs/03-bootstrap` : guides de construction (shell, ansible, AWX, CI, observability, logging, quality, gitops, policy)
+- `docs/04-diagnostics` : runbooks
+- `docs/05-audit` : checklists, matrices, audit final
+- `docs/06-diagrams` : schémas Mermaid
+- `docs/07-adr` : ADR 001 à 017
+- `docs/08-operations` : modèles opérationnels par couche
+- `docs/10-release` : release notes V30 → V39
+- `ansible/` : inventaires, group_vars, rôles, playbooks
+- `awx/` : job templates, workflow templates, inventaires AWX
+- `gitlab/ci/` : stages CI par couche
+- `observability/` : configurations Prometheus et Grafana
+- `logging/` : configurations Loki et Promtail
+- `sonarqube/` : configuration SonarQube
+- `openshift/` : mappings K8s → OpenShift
+- `gitops/` : manifests Argo CD
+- `policy/` : politiques Kyverno
+- `kubernetes/` : manifests, kubeconfigs, systemd, PKI
+- `scripts/` : scripts 00 à 54
+- `labs/` : labs 01 à 38
+- `vagrant/` : topologie Vagrant
+- `evidence/` : preuves et validations
