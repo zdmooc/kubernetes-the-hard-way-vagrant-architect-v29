@@ -1,0 +1,1 @@
+deploy-observability: { stage: package, script: ['echo observability'] }
