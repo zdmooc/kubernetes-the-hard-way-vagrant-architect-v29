@@ -1,0 +1,13 @@
+---
+- name: Validation de la plateforme
+  hosts: controller[0]
+  tasks:
+    - name: Vérifier l'état des nœuds
+      command: kubectl get nodes
+      register: nodes_status
+      environment:
+        KUBECONFIG: /admin.kubeconfig
+    
+    - name: Afficher l'état des nœuds
+      debug:
+        var: nodes_status.stdout_lines

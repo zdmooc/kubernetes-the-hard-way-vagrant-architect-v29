@@ -1,0 +1,9 @@
+---
+- name: Opérations Day 2
+  hosts: all
+  tasks:
+    - name: Mettre à jour les paquets OS
+      apt:
+        update_cache: yes
+        upgrade: dist
+      when: ansible_os_family == "Debian"

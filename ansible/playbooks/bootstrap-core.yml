@@ -1,0 +1,5 @@
+---
+- name: Bootstrap Core Components
+  hosts: kubernetes
+  roles:
+    - common

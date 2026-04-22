@@ -1,0 +1,20 @@
+---
+# Variables globales pour le déploiement Kubernetes
+kubernetes_version: "v1.29.0"
+etcd_version: "v3.5.10"
+containerd_version: "1.7.13"
+cni_plugins_version: "v1.4.0"
+crictl_version: "v1.29.0"
+runc_version: "v1.1.12"
+
+cluster_name: "kubernetes-the-hard-way"
+cluster_cidr: "10.200.0.0/16"
+service_cluster_ip_range: "10.32.0.0/24"
+cluster_dns_ip: "10.32.0.10"
+
+# OIDC Settings
+oidc_issuer_url: "https://10.240.0.16:8443/realms/kubernetes"
+oidc_client_id: "kubernetes-cluster"
+oidc_username_claim: "email"
+oidc_groups_claim: "groups"
+oidc_groups_prefix: "oidc:"
