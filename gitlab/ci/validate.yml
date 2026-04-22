@@ -1,0 +1,1 @@
+validate-ansible: { stage: validate, script: ['ansible-playbook --syntax-check ansible/playbooks/site.yml'] }

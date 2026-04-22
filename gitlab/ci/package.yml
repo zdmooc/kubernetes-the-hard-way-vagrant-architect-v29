@@ -1,0 +1,1 @@
+package-release: { stage: package, script: ['./scripts/36-package-release.sh'] }
