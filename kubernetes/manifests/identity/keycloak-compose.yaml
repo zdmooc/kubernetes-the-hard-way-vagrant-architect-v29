@@ -1,0 +1,19 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1
+    command:
+      - start-dev
+      - --import-realm
+      - --hostname-strict=false
+      - --http-enabled=true
+      - --https-certificate-file=/opt/keycloak/conf/server.crt
+      - --https-certificate-key-file=/opt/keycloak/conf/server.key
+    env_file:
+      - ../../configs/keycloak.env.example
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - ../../configs/keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+      - ../../configs/keycloak/tls/server.crt:/opt/keycloak/conf/server.crt:ro
+      - ../../configs/keycloak/tls/server.key:/opt/keycloak/conf/server.key:ro

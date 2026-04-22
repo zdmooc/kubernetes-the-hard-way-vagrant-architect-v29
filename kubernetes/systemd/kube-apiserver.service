@@ -1,0 +1,13 @@
+[Unit]
+Description=Kubernetes API Server
+Documentation=https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/
+After=network-online.target etcd.service
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/kube-apiserver   --advertise-address=%H   --allow-privileged=true   --authorization-mode=Node,RBAC   --audit-log-path=/var/log/kubernetes/audit.log   --audit-policy-file=/etc/kubernetes/config/audit-policy.yaml   --client-ca-file=/etc/kubernetes/pki/ca.pem   --enable-admission-plugins=NodeRestriction,ServiceAccount   --etcd-cafile=/etc/kubernetes/pki/ca.pem   --etcd-certfile=/etc/kubernetes/pki/kubernetes.pem   --etcd-keyfile=/etc/kubernetes/pki/kubernetes-key.pem   --etcd-servers=https://192.168.56.11:2379,https://192.168.56.12:2379,https://192.168.56.13:2379   --kubelet-certificate-authority=/etc/kubernetes/pki/ca.pem   --kubelet-client-certificate=/etc/kubernetes/pki/kubernetes.pem   --kubelet-client-key=/etc/kubernetes/pki/kubernetes-key.pem   --proxy-client-cert-file=/etc/kubernetes/pki/kubernetes.pem   --proxy-client-key-file=/etc/kubernetes/pki/kubernetes-key.pem   --requestheader-client-ca-file=/etc/kubernetes/pki/ca.pem   --requestheader-allowed-names=kubernetes   --requestheader-extra-headers-prefix=X-Remote-Extra-   --requestheader-group-headers=X-Remote-Group   --requestheader-username-headers=X-Remote-User   --runtime-config=admissionregistration.k8s.io/v1beta1=false   --service-account-issuer=https://kubernetes.default.svc.cluster.local   --service-account-key-file=/etc/kubernetes/pki/service-account.pem   --service-account-signing-key-file=/etc/kubernetes/pki/service-account-key.pem   --service-cluster-ip-range=10.32.0.0/24   --tls-cert-file=/etc/kubernetes/pki/kubernetes.pem   --tls-private-key-file=/etc/kubernetes/pki/kubernetes-key.pem   --v=2
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

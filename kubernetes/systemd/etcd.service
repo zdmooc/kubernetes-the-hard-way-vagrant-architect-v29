@@ -1,0 +1,16 @@
+[Unit]
+Description=etcd
+Documentation=https://etcd.io/docs/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+EnvironmentFile=-/etc/etcd/etcd.env
+ExecStart=/usr/local/bin/etcd   --name=${ETCD_NAME}   --cert-file=/etc/kubernetes/pki/kubernetes.pem   --key-file=/etc/kubernetes/pki/kubernetes-key.pem   --peer-cert-file=/etc/kubernetes/pki/kubernetes.pem   --peer-key-file=/etc/kubernetes/pki/kubernetes-key.pem   --trusted-ca-file=/etc/kubernetes/pki/ca.pem   --peer-trusted-ca-file=/etc/kubernetes/pki/ca.pem   --peer-client-cert-auth   --client-cert-auth   --data-dir=${ETCD_DATA_DIR}   --initial-advertise-peer-urls=${ETCD_INITIAL_ADVERTISE_PEER_URLS}   --listen-peer-urls=${ETCD_LISTEN_PEER_URLS}   --listen-client-urls=${ETCD_LISTEN_CLIENT_URLS}   --advertise-client-urls=${ETCD_ADVERTISE_CLIENT_URLS}   --initial-cluster-token=${ETCD_INITIAL_CLUSTER_TOKEN}   --initial-cluster=${ETCD_INITIAL_CLUSTER}   --initial-cluster-state=${ETCD_INITIAL_CLUSTER_STATE}
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=40000
+
+[Install]
+WantedBy=multi-user.target

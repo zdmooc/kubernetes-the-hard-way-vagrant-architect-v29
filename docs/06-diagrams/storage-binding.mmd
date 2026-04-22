@@ -1,0 +1,4 @@
+flowchart LR
+  POD[Pod] --> PVC[PersistentVolumeClaim]
+  PVC --> PV[PersistentVolume]
+  PV --> SC[StorageClass / CSI]

@@ -1,0 +1,10 @@
+sequenceDiagram
+  participant C as Client
+  participant A as API Server
+  participant E as etcd
+  participant K as kubelet/controller
+  C->>A: create/update object
+  A->>A: authn/authz/admission
+  A->>E: persist object
+  E-->>A: ack
+  A-->>K: watch event

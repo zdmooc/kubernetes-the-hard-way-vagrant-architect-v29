@@ -1,0 +1,4 @@
+username,password,email,groups
+alice,ChangeMe!123,alice@example.local,dev ops
+bob,ChangeMe!123,bob@example.local,ops auditors
+carol,ChangeMe!123,carol@example.local,platform-admins auditors

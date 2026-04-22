@@ -1,0 +1,20 @@
+# Bastion hardened SSH baseline
+Port 22
+Protocol 2
+PermitRootLogin no
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+ChallengeResponseAuthentication no
+UsePAM yes
+PubkeyAuthentication yes
+X11Forwarding no
+AllowAgentForwarding yes
+AllowTcpForwarding yes
+AllowUsers vagrant
+ClientAliveInterval 300
+ClientAliveCountMax 2
+LoginGraceTime 20
+MaxAuthTries 3
+MaxSessions 10
+AllowGroups sudo
+Subsystem sftp /usr/lib/openssh/sftp-server

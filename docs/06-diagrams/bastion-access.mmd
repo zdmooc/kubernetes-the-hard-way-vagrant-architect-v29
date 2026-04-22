@@ -1,0 +1,11 @@
+flowchart LR
+  U[User workstation] --> B[bastion-0]
+  U --> LB[lb-0]
+  B --> C0[controller-0]
+  B --> C1[controller-1]
+  B --> C2[controller-2]
+  B --> W0[worker-0]
+  B --> W1[worker-1]
+  LB --> C0
+  LB --> C1
+  LB --> C2

@@ -1,0 +1,8 @@
+flowchart LR
+  U[Operator with kubectl oidc-login] --> K[Keycloak keycloak-0]
+  U --> LB[API Load Balancer]
+  K --> U
+  U --> API[kube-apiserver]
+  API --> JWKS[OIDC validation / issuer / JWKS]
+  API --> RBAC[Group-based RBAC]
+  RBAC --> RES[Allow or deny]

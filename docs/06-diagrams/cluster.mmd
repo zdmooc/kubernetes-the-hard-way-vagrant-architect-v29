@@ -1,0 +1,14 @@
+flowchart TB
+  U[User / kubectl / CI] --> LB[Load Balancer]
+  LB --> API1[kube-apiserver controller-0]
+  LB --> API2[kube-apiserver controller-1]
+  LB --> API3[kube-apiserver controller-2]
+  API1 --> ETCD[(etcd cluster)]
+  API2 --> ETCD
+  API3 --> ETCD
+  API1 --> W1[worker-0]
+  API1 --> W2[worker-1]
+  W1 --> P1[Pods]
+  W2 --> P2[Pods]
+  P1 --> DNS[CoreDNS]
+  P2 --> DNS

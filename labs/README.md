@@ -1,0 +1,25 @@
+# Labs Index
+
+- `lab-01-reading-the-architecture.md` — Lab 01 — Reading the architecture
+- `lab-02-pki-and-certificates.md` — Lab 02 — PKI and certificates
+- `lab-03-etcd.md` — Lab 03 — etcd
+- `lab-04-api-server.md` — Lab 04 — API Server
+- `lab-05-scheduler-and-controllers.md` — Lab 05 — Scheduler and controllers
+- `lab-06-kubelet-and-runtime.md` — Lab 06 — kubelet and runtime
+- `lab-07-service-networking.md` — Lab 07 — Service networking
+- `lab-08-coredns.md` — Lab 08 — CoreDNS
+- `lab-09-workloads.md` — Lab 09 — Workloads
+- `lab-10-rbac-and-security.md` — Lab 10 — RBAC and security
+- `lab-11-network-policies.md` — Lab 11 — Network policies
+- `lab-12-storage.md` — Lab 12 — Storage
+- `lab-13-audit-walkthrough.md` — Lab 13 — Audit walkthrough
+- `lab-14-failure-scenarios.md` — Lab 14 — Failure scenarios
+- `lab-15-audit-sprint.md` — Lab 15 — Audit sprint
+- `lab-16-component-walkthrough.md` — Lab 16 — Walkthrough composant par composant
+- `lab-17-network-dns-policy.md` — Lab 17 — DNS et NetworkPolicy
+- `lab-18-bastion-and-access.md` — Lab 18 — Bastion and Access Model
+- `lab-19-bastion-hardening.md` — Lab 19 — Bastion hardening and access evidence
+- `lab-20-failure-injection.md` — Lab 16 — Failure Injection
+- `lab-21-rbac-admission-and-audit-baseline.md` — Lab 21 — RBAC, Admission and Audit
+- `lab-22-oidc-and-identity-separation.md` — Lab 21 — OIDC and Identity Separation
+- `lab-23-full-oidc-e2e.md` — Lab 22 — Full OIDC End to End
