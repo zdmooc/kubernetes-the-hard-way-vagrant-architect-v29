@@ -1,1 +1,10 @@
-deploy-logging: { stage: package, script: ['kubectl apply -f kubernetes/manifests/logging/'] }
+---
+deploy-logging:
+  stage: package
+  image: bitnami/kubectl:latest
+  script:
+    - kubectl apply -f kubernetes/manifests/logging/loki/loki.yaml
+    - kubectl apply -f kubernetes/manifests/logging/promtail/promtail.yaml
+    - kubectl rollout status statefulset/loki -n logging --timeout=120s
+  only:
+    - main

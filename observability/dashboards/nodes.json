@@ -1,1 +1,27 @@
-{"title": "Node Metrics", "panels": []}
+{
+  "__inputs": [],
+  "__requires": [],
+  "annotations": {"list": []},
+  "description": "Kubernetes Node Metrics",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1,
+  "links": [],
+  "panels": [
+    {
+      "type": "graph",
+      "title": "CPU Usage",
+      "targets": [{"expr": "100 - (avg by (instance) (irate(node_cpu_seconds_total{mode='idle'}[5m])) * 100)", "legendFormat": "{{instance}}"}],
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": ["kubernetes", "nodes"],
+  "title": "Node Metrics",
+  "uid": "node-metrics",
+  "version": 1
+}

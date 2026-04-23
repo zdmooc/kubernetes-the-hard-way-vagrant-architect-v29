@@ -1,1 +1,27 @@
-# Lab 34 SonarQube
+# Lab 34 — SonarQube Quality Gates
+
+Ce lab fait partie du parcours Kubernetes The Hard Way Architect Edition.
+
+## Objectif
+Mettre en pratique les concepts de la version V35 : SonarQube Quality Gates.
+
+## Prérequis
+- Cluster Kubernetes opérationnel (V29+)
+- Accès au bastion configuré
+
+## Étapes
+
+### Étape 1 : Vérification des prérequis
+Exécutez le script de validation de la version précédente pour vous assurer que le cluster est sain.
+
+### Étape 2 : Déploiement
+Suivez les instructions du document `docs/03-bootstrap/` correspondant à cette version.
+
+### Étape 3 : Validation
+Exécutez le script de validation associé (`scripts/42-validate-*.sh`).
+
+### Étape 4 : Exploration
+Explorez les fonctionnalités déployées et notez vos observations.
+
+## Résultat attendu
+La couche SonarQube Quality Gates est opérationnelle et validée.

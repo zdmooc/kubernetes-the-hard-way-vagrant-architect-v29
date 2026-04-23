@@ -1,1 +1,10 @@
-stages: [lint, validate, package]
+---
+stages:
+  - lint
+  - validate
+  - package
+
+variables:
+  KUBECONFIG: "${CI_PROJECT_DIR}/.kube/config"
+  SONAR_HOST_URL: "${SONAR_HOST_URL}"
+  SONAR_TOKEN: "${SONAR_TOKEN}"
