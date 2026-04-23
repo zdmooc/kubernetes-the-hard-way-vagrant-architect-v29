@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# shellcheck source=scripts/lib.sh
 source "$(dirname "$0")/lib.sh"
 
 PKI_DIR="${REPO_ROOT}/kubernetes/pki"
@@ -78,4 +79,4 @@ done
 [[ -f "${PKI_DIR}/service-account.pem" ]] || gen_client_cert service-account service-accounts
 
 log "PKI prête dans ${PKI_DIR}"
-ls -1 "${PKI_DIR}" | sed 's/^/ - /'
+find "${PKI_DIR}" -maxdepth 1 -type f -printf ' - %f\n'

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# shellcheck source=scripts/lib.sh
 source "$(dirname "$0")/lib.sh"
 log_info "Bootstrap GitLab CI configuration"
 log_info "Validating .gitlab-ci.yml syntax..."

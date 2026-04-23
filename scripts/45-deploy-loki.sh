@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# shellcheck source=scripts/lib.sh
 source "$(dirname "$0")/lib.sh"
 log_info "Deploying Loki to logging namespace..."
 kubectl apply -f kubernetes/manifests/logging/loki/loki.yaml

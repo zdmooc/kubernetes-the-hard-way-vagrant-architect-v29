@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# shellcheck source=scripts/lib.sh
 source "$(dirname "$0")/lib.sh"
 
 BIN_DIR_REMOTE="/usr/local/bin"
@@ -29,7 +30,7 @@ for c in $(controllers); do
   scp_to_node "${REPO_ROOT}/kubernetes/systemd/etcd.service" "$c" "/tmp/etcd.service"
   ssh_node "$c" "sudo mv /tmp/etcd.service ${SYSTEMD_DIR}/etcd.service"
 
-  cat > /tmp/${c}-etcd.env <<EOF
+  cat > "/tmp/${c}-etcd.env" <<EOF
 ETCD_NAME=${c}
 ETCD_DATA_DIR=${DATA_DIR}
 ETCD_INITIAL_CLUSTER=controller-0=https://192.168.56.11:2380,controller-1=https://192.168.56.12:2380,controller-2=https://192.168.56.13:2380
@@ -40,9 +41,9 @@ ETCD_LISTEN_CLIENT_URLS=https://127.0.0.1:2379,https://${IP}:2379
 ETCD_ADVERTISE_CLIENT_URLS=https://${IP}:2379
 ETCD_INITIAL_ADVERTISE_PEER_URLS=https://${IP}:2380
 EOF
-  scp_to_node /tmp/${c}-etcd.env "$c" "/tmp/etcd.env"
+  scp_to_node "/tmp/${c}-etcd.env" "$c" "/tmp/etcd.env"
   ssh_node "$c" "sudo mv /tmp/etcd.env /etc/etcd/etcd.env && sudo systemctl daemon-reload && sudo systemctl enable etcd && sudo systemctl restart etcd && sudo systemctl is-active etcd"
-  rm -f /tmp/${c}-etcd.env
+  rm -f "/tmp/${c}-etcd.env"
 
 done
 
