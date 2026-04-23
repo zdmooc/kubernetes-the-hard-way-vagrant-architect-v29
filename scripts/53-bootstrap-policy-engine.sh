@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# shellcheck source=scripts/lib.sh
 source "$(dirname "$0")/lib.sh"
 log_info "Bootstrapping Kyverno Policy Engine..."
 kubectl create -f https://github.com/kyverno/kyverno/releases/download/v1.10.0/install.yaml 2>/dev/null || log_warning "Kyverno may already be installed"

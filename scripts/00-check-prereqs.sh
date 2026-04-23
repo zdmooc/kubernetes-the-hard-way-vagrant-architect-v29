@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# shellcheck source=scripts/lib.sh
 source "$(dirname "$0")/lib.sh"
 
 for cmd in vagrant curl tar sha256sum kubectl openssl awk; do

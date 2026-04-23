@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# shellcheck source=scripts/lib.sh
 source "$(dirname "$0")/lib.sh"
+# shellcheck source=scripts/versions.env
 source "$(dirname "$0")/versions.env"
 
 require_cmd curl
@@ -20,7 +22,9 @@ ETCD_URL="https://github.com/etcd-io/etcd/releases/download/${ETCD_VERSION}/${ET
 RUNC_URL="https://github.com/opencontainers/runc/releases/download/v${RUNC_VERSION}/runc.${ARCH}"
 CNI_ARCHIVE="cni-plugins-${OS}-${ARCH}-${CNI_PLUGINS_VERSION}.tgz"
 CNI_URL="https://github.com/containernetworking/plugins/releases/download/${CNI_PLUGINS_VERSION}/${CNI_ARCHIVE}"
-CRICTL_ARCHIVE="crictl-${RUNC_VERSION}-${OS}-${ARCH}.tar.gz"
+CRICTL_VERSION="${RUNC_VERSION}"
+CRICTL_ARCHIVE="crictl-${CRICTL_VERSION}-${OS}-${ARCH}.tar.gz"
+CRICTL_URL="https://github.com/kubernetes-sigs/cri-tools/releases/download/v${CRICTL_VERSION}/${CRICTL_ARCHIVE}"
 
 fetch() {
   local url="$1"
@@ -56,6 +60,10 @@ chmod +x "${OUT_DIR}/runc"
 fetch "${CNI_URL}" "${TMP_DIR}/${CNI_ARCHIVE}"
 mkdir -p "${OUT_DIR}/cni-plugins"
 tar -xzf "${TMP_DIR}/${CNI_ARCHIVE}" -C "${OUT_DIR}/cni-plugins"
+
+fetch "${CRICTL_URL}" "${TMP_DIR}/${CRICTL_ARCHIVE}"
+tar -xzf "${TMP_DIR}/${CRICTL_ARCHIVE}" -C "${OUT_DIR}"
+chmod +x "${OUT_DIR}/crictl"
 
 # containerd est fourni par paquet Debian dans la V18 pour simplifier le build local.
 cat > "${OUT_DIR}/README.md" <<EOF
