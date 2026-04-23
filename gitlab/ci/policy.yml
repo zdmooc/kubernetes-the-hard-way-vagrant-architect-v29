@@ -1,1 +1,1 @@
-deploy-policy: { stage: package, script: ['echo policy'] }
+deploy-policy: { stage: package, script: ['kubectl apply -f policy/policies/'] }

@@ -1,1 +1,1 @@
-deploy-logging: { stage: package, script: ['echo logging'] }
+deploy-logging: { stage: package, script: ['kubectl apply -f kubernetes/manifests/logging/'] }

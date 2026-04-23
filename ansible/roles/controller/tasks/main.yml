@@ -1,0 +1,78 @@
+---
+- name: Télécharger les binaires du control plane
+  get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/{{ kubernetes_version }}/bin/linux/amd64/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    mode: '0755'
+  loop:
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler
+    - kubectl
+
+- name: Télécharger les binaires etcd
+  unarchive:
+    src: "https://github.com/etcd-io/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+    dest: /tmp/
+    remote_src: yes
+
+- name: Déplacer les binaires etcd vers /usr/local/bin
+  command: mv /tmp/etcd-{{ etcd_version }}-linux-amd64/etcd /tmp/etcd-{{ etcd_version }}-linux-amd64/etcdctl /usr/local/bin/
+  args:
+    creates: /usr/local/bin/etcd
+
+- name: Créer les répertoires de configuration
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0700'
+  loop:
+    - /etc/etcd
+    - /var/lib/etcd
+    - /etc/kubernetes/config
+    - /var/lib/kubernetes
+
+- name: Copier les certificats PKI
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0600'
+  loop:
+    - { src: "/tmp/pki/ca.pem", dest: "/var/lib/kubernetes/ca.pem" }
+    - { src: "/tmp/pki/kubernetes.pem", dest: "/var/lib/kubernetes/kubernetes.pem" }
+    - { src: "/tmp/pki/kubernetes-key.pem", dest: "/var/lib/kubernetes/kubernetes-key.pem" }
+
+- name: Configurer etcd systemd service
+  template:
+    src: etcd.service.j2
+    dest: /etc/systemd/system/etcd.service
+  notify: restart etcd
+
+- name: Configurer kube-apiserver systemd service
+  template:
+    src: kube-apiserver.service.j2
+    dest: /etc/systemd/system/kube-apiserver.service
+  notify: restart kube-apiserver
+
+- name: Configurer kube-controller-manager systemd service
+  template:
+    src: kube-controller-manager.service.j2
+    dest: /etc/systemd/system/kube-controller-manager.service
+  notify: restart kube-controller-manager
+
+- name: Configurer kube-scheduler systemd service
+  template:
+    src: kube-scheduler.service.j2
+    dest: /etc/systemd/system/kube-scheduler.service
+  notify: restart kube-scheduler
+
+- name: Démarrer et activer les services
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - etcd
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler

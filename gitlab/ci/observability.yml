@@ -1,1 +1,1 @@
-deploy-observability: { stage: package, script: ['echo observability'] }
+deploy-observability: { stage: package, script: ['kubectl apply -f kubernetes/manifests/observability/'] }

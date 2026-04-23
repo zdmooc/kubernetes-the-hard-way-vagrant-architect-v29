@@ -1,1 +1,20 @@
-validate-ansible: { stage: validate, script: ['ansible-playbook --syntax-check ansible/playbooks/site.yml'] }
+---
+validate-ansible-syntax:
+  stage: validate
+  image: willhallonline/ansible:latest
+  script:
+    - ansible-playbook --syntax-check ansible/playbooks/site.yml
+    - ansible-playbook --syntax-check ansible/playbooks/build-platform.yml
+    - ansible-playbook --syntax-check ansible/playbooks/validate-platform.yml
+    - ansible-playbook --syntax-check ansible/playbooks/day2-operations.yml
+  tags:
+    - shell
+
+validate-kubernetes-manifests:
+  stage: validate
+  image: instrumenta/kubeval:latest
+  script:
+    - kubeval kubernetes/manifests/*.yaml
+    - kubeval kubernetes/manifests/observability/*.yaml
+    - kubeval kubernetes/manifests/logging/*.yaml
+  allow_failure: true

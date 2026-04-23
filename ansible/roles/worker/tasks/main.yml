@@ -1,0 +1,81 @@
+---
+- name: Télécharger containerd
+  get_url:
+    url: "https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-amd64.tar.gz"
+    dest: /tmp/containerd.tar.gz
+
+- name: Extraire containerd
+  unarchive:
+    src: /tmp/containerd.tar.gz
+    dest: /usr/local/
+    remote_src: yes
+
+- name: Télécharger runc
+  get_url:
+    url: "https://github.com/opencontainers/runc/releases/download/{{ runc_version }}/runc.amd64"
+    dest: /usr/local/sbin/runc
+    mode: '0755'
+
+- name: Télécharger CNI plugins
+  get_url:
+    url: "https://github.com/containernetworking/plugins/releases/download/{{ cni_plugins_version }}/cni-plugins-linux-amd64-{{ cni_plugins_version }}.tgz"
+    dest: /tmp/cni-plugins.tgz
+
+- name: Créer le répertoire CNI
+  file:
+    path: /opt/cni/bin
+    state: directory
+    mode: '0755'
+
+- name: Extraire CNI plugins
+  unarchive:
+    src: /tmp/cni-plugins.tgz
+    dest: /opt/cni/bin/
+    remote_src: yes
+
+- name: Configurer containerd
+  file:
+    path: /etc/containerd
+    state: directory
+
+- name: Générer la configuration par défaut de containerd
+  shell: containerd config default > /etc/containerd/config.toml
+  args:
+    creates: /etc/containerd/config.toml
+
+- name: Configurer containerd pour utiliser systemd cgroup
+  replace:
+    path: /etc/containerd/config.toml
+    regexp: 'SystemdCgroup = false'
+    replace: 'SystemdCgroup = true'
+
+- name: Télécharger kubelet et kube-proxy
+  get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/{{ kubernetes_version }}/bin/linux/amd64/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    mode: '0755'
+  loop:
+    - kubelet
+    - kube-proxy
+
+- name: Configurer kubelet systemd service
+  template:
+    src: kubelet.service.j2
+    dest: /etc/systemd/system/kubelet.service
+  notify: restart kubelet
+
+- name: Configurer kube-proxy systemd service
+  template:
+    src: kube-proxy.service.j2
+    dest: /etc/systemd/system/kube-proxy.service
+  notify: restart kube-proxy
+
+- name: Démarrer et activer les services
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - containerd
+    - kubelet
+    - kube-proxy
