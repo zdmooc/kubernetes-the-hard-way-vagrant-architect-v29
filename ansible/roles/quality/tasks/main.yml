@@ -1,0 +1,22 @@
+---
+- name: Check if SonarQube container is running
+  command: docker ps -q -f name=sonarqube
+  register: sonar_running
+  ignore_errors: true
+  changed_when: false
+
+- name: Start SonarQube container
+  command: docker run -d --name sonarqube -p 9000:9000 sonarqube:10-community
+  when: sonar_running.stdout == ""
+  register: start_sonar
+  changed_when: "'sonarqube' in start_sonar.stdout"
+
+- name: Wait for SonarQube to be ready
+  uri:
+    url: http://localhost:9000/api/system/status
+    return_content: yes
+  register: sonar_status
+  until: "'UP' in sonar_status.content"
+  retries: 12
+  delay: 10
+  when: start_sonar.changed

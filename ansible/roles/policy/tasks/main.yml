@@ -1,0 +1,21 @@
+---
+- name: Check if Kyverno is installed
+  command: kubectl get deployment kyverno -n kyverno
+  register: kyverno_check
+  ignore_errors: true
+  changed_when: false
+
+- name: Install Kyverno
+  command: kubectl create -f https://github.com/kyverno/kyverno/releases/download/v1.10.0/install.yaml
+  when: kyverno_check.rc != 0
+  register: install_kyverno
+  changed_when: "'created' in install_kyverno.stdout"
+
+- name: Wait for Kyverno to be ready
+  command: kubectl wait --for=condition=available deployment/kyverno -n kyverno --timeout=180s
+  changed_when: false
+
+- name: Apply baseline policies
+  command: kubectl apply -f /tmp/policy/policies/
+  register: apply_policies
+  changed_when: "'created' in apply_policies.stdout or 'configured' in apply_policies.stdout"
