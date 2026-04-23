@@ -1,0 +1,30 @@
+---
+- name: Préparation des nœuds
+  hosts: all
+  roles:
+    - common
+
+- name: Configuration du Bastion
+  hosts: bastion
+  roles:
+    - bastion
+
+- name: Configuration du Load Balancer
+  hosts: loadbalancer
+  roles:
+    - loadbalancer
+
+- name: Configuration Identity Provider (Keycloak)
+  hosts: identity
+  roles:
+    - identity
+
+- name: Déploiement du Control Plane
+  hosts: controller
+  roles:
+    - controller
+
+- name: Déploiement des Workers
+  hosts: worker
+  roles:
+    - worker

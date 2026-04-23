@@ -1,0 +1,27 @@
+{
+  "__inputs": [],
+  "__requires": [],
+  "annotations": {"list": []},
+  "description": "Kubernetes Cluster Overview",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1,
+  "links": [],
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Cluster Nodes",
+      "targets": [{"expr": "count(kube_node_info)", "legendFormat": "Nodes"}],
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": ["kubernetes"],
+  "title": "Cluster Metrics",
+  "uid": "cluster-metrics",
+  "version": 1
+}

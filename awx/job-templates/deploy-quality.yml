@@ -1,0 +1,11 @@
+---
+name: "deploy-quality"
+description: "Job Template for deploy-quality"
+job_type: run
+inventory: "Vagrant Inventory"
+project: "Kubernetes The Hard Way"
+playbook: "ansible/playbooks/deploy-quality.yml"
+credentials:
+  - "Vagrant Machine Credential"
+become_enabled: true
+verbosity: 1

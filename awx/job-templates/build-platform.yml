@@ -1,0 +1,11 @@
+---
+name: "build-platform"
+description: "Job Template for build-platform"
+job_type: run
+inventory: "Vagrant Inventory"
+project: "Kubernetes The Hard Way"
+playbook: "ansible/playbooks/build-platform.yml"
+credentials:
+  - "Vagrant Machine Credential"
+become_enabled: true
+verbosity: 1

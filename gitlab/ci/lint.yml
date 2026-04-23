@@ -1,0 +1,26 @@
+---
+lint-shell:
+  stage: lint
+  image: koalaman/shellcheck-alpine:latest
+  script:
+    - shellcheck scripts/*.sh
+  allow_failure: true
+  artifacts:
+    when: on_failure
+    paths:
+      - shellcheck-report.txt
+
+lint-yaml:
+  stage: lint
+  image: sdesbure/yamllint:latest
+  script:
+    - yamllint ansible/
+    - yamllint kubernetes/manifests/
+  allow_failure: true
+
+lint-ansible:
+  stage: lint
+  image: willhallonline/ansible:latest
+  script:
+    - ansible-lint ansible/playbooks/site.yml
+  allow_failure: true

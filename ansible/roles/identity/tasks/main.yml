@@ -1,0 +1,56 @@
+---
+- name: Installer Docker pour exécuter Keycloak
+  apt:
+    name:
+      - docker.io
+      - docker-compose
+    state: present
+    update_cache: yes
+
+- name: S'assurer que Docker est démarré
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Créer le répertoire de configuration Keycloak
+  file:
+    path: /opt/keycloak
+    state: directory
+    mode: '0755'
+
+- name: Copier le fichier docker-compose.yml pour Keycloak
+  copy:
+    dest: /opt/keycloak/docker-compose.yml
+    content: |
+      version: '3'
+      services:
+        keycloak:
+          image: quay.io/keycloak/keycloak:23.0.4
+          command: start-dev
+          environment:
+            KC_DB: dev-file
+            KEYCLOAK_ADMIN: admin
+            KEYCLOAK_ADMIN_PASSWORD: admin
+            KC_HOSTNAME: keycloak-0.kubernetes.local
+            KC_HTTPS_CERTIFICATE_FILE: /etc/x509/https/tls.crt
+            KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/x509/https/tls.key
+          ports:
+            - "8080:8080"
+            - "8443:8443"
+          volumes:
+            - ./tls:/etc/x509/https:ro
+    mode: '0644'
+
+- name: Démarrer Keycloak via docker-compose
+  command: docker-compose up -d
+  args:
+    chdir: /opt/keycloak
+  register: keycloak_start
+  changed_when: "'Creating' in keycloak_start.stdout or 'Starting' in keycloak_start.stdout"
+
+- name: Attendre que Keycloak soit prêt
+  wait_for:
+    port: 8080
+    delay: 10
+    timeout: 300

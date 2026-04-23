@@ -1,0 +1,24 @@
+---
+- name: Check if Argo CD namespace exists
+  command: kubectl get namespace argocd
+  register: argocd_ns
+  ignore_errors: true
+  changed_when: false
+
+- name: Create Argo CD namespace
+  command: kubectl create namespace argocd
+  when: argocd_ns.rc != 0
+
+- name: Apply Argo CD installation manifest
+  command: kubectl apply -f /tmp/gitops/argocd/installation.yaml
+  register: apply_argocd
+  changed_when: "'created' in apply_argocd.stdout or 'configured' in apply_argocd.stdout"
+
+- name: Wait for Argo CD server to be ready
+  command: kubectl wait --for=condition=available deployment/argocd-server -n argocd --timeout=180s
+  changed_when: false
+
+- name: Apply App-of-Apps manifest
+  command: kubectl apply -f /tmp/gitops/argocd/app-of-apps.yaml
+  register: apply_apps
+  changed_when: "'created' in apply_apps.stdout or 'configured' in apply_apps.stdout"

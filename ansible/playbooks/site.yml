@@ -1,0 +1,4 @@
+---
+# Playbook principal qui importe les autres
+- import_playbook: build-platform.yml
+- import_playbook: validate-platform.yml

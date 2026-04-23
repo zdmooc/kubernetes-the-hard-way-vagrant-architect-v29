@@ -1,0 +1,16 @@
+---
+package-release:
+  stage: package
+  image: alpine:latest
+  script:
+    - apk add --no-cache zip tar
+    - mkdir -p release
+    - cp -r docs/ labs/ scripts/ kubernetes/ ansible/ awx/ release/
+    - tar -czvf kubernetes-the-hard-way-architect-v39.tar.gz release/
+  artifacts:
+    paths:
+      - kubernetes-the-hard-way-architect-v39.tar.gz
+    expire_in: 1 week
+  only:
+    - tags
+    - main

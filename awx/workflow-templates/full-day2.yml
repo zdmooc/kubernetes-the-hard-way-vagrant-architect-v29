@@ -1,0 +1,19 @@
+---
+name: "Full Day2 Operations Workflow"
+description: "Execute all day2 extensions (observability, logging, policy, gitops)"
+organization: "Default"
+workflow_nodes:
+  - identifier: "node_obs"
+    unified_job_template: "deploy-observability"
+    success_nodes:
+      - "node_log"
+  - identifier: "node_log"
+    unified_job_template: "deploy-logging"
+    success_nodes:
+      - "node_policy"
+  - identifier: "node_policy"
+    unified_job_template: "deploy-policy"
+    success_nodes:
+      - "node_gitops"
+  - identifier: "node_gitops"
+    unified_job_template: "deploy-gitops"

@@ -1,13 +1,12 @@
-# Kubernetes The Hard Way with Vagrant — Architect Edition V29
+# Kubernetes The Hard Way with Vagrant — Architect Edition V39
 
-## Positionnement
-
-La **V29** est la continuité cumulative de la V17. Elle conserve tout le socle d’architecture, d’audit, de sécurité, de bastion, de segmentation réseau et d’OIDC, puis ajoute une couche **beaucoup plus exécutable** pour construire la plateforme en local avec Vagrant.
+La **V39** est l'aboutissement cumulatif de toutes les versions précédentes. Elle conserve intégralement le socle d'architecture, d'audit, de sécurité, de bastion, de segmentation réseau et d'OIDC (V17-V29), et y ajoute des couches d'industrialisation complètes pour une exploitation d'entreprise.
 
 Le dépôt sert donc à la fois à :
-- **construire Kubernetes à la main avec Vagrant**, composant par composant ;
-- **expliquer l’architecture**, les flux, le diagnostic, l’audit et les arbitrages ;
-- **industrialiser le build local** : binaires, kubeconfigs, load balancer, runtime, CNI, addons, validations.
+- **construire Kubernetes à la main avec Vagrant**, composant par composant (approche "Hard Way") ;
+- **expliquer l’architecture**, les flux, le diagnostic, l'audit et les arbitrages ;
+- **industrialiser le déploiement** via Ansible, GitLab CI et AWX ;
+- **opérer la plateforme (Day 2)** avec Observabilité (Prometheus/Grafana), Logging (Loki/Promtail) et Gouvernance (Kyverno, SonarQube, ArgoCD).
 
 ## Topologie cible
 
@@ -21,93 +20,70 @@ Le dépôt sert donc à la fois à :
 - `worker-1`
 
 Cette topologie met en évidence :
-- HA API,
-- quorum etcd,
-- séparation accès / identité / control plane / workers,
+- HA API et quorum etcd,
+- séparation stricte accès / identité / control plane / workers,
 - flux north-south et east-west,
-- diagnostic réaliste,
-- modèle d’accès plateforme plus proche d’une vraie architecture entreprise.
+- modèle d’accès plateforme réaliste d'une architecture entreprise.
 
-## Ce que contient désormais la V29
+## Parcours disponibles en V39
 
-### 1. Tout le contenu V17
-- architecture, concepts, runbooks, audit, ADR, labs ;
-- bastion, segmentation, hardening, RBAC, admission, audit policy ;
-- préparation puis intégration OIDC / Keycloak.
-
-### 2. Une couche d’exécution renforcée
-- **téléchargement réel des binaires** Kubernetes / etcd / runc / CNI ;
-- **génération réelle des kubeconfigs** via `kubectl config` ;
-- **configuration du load balancer** (`haproxy`) ;
-- **configuration containerd + CNI** sur les workers ;
-- **script one-shot** de build local ;
-- **validation plus stricte** de l’enchaînement.
-
-### 3. Une base locale plus proche d’une vraie plateforme construite
-- fichiers de configuration pour `haproxy`, `containerd`, CNI bridge/loopback ;
-- scripts additionnels pour fermer les derniers trous majeurs du build local ;
-- documentation V29 dédiée aux écarts entre dépôt “portfolio” et dépôt “plateforme locale montable”.
+| Parcours | Description | Répertoire principal |
+| :--- | :--- | :--- |
+| **Shell** | Construction manuelle composant par composant (KTHW original) | `scripts/` |
+| **Ansible** | Déploiement déclaratif et idempotent de l'infrastructure | `ansible/` |
+| **AWX** | Orchestration d'entreprise avec interface web | `awx/` |
+| **GitLab CI** | Pipeline de lint, validation et packaging | `.gitlab-ci.yml`, `gitlab/ci/` |
+| **Observability** | Prometheus + Grafana (métriques) | `kubernetes/manifests/observability/` |
+| **Logging** | Loki + Promtail (logs centralisés) | `kubernetes/manifests/logging/` |
+| **Quality** | SonarQube + Quality Gates | `sonarqube/` |
+| **OpenShift** | Mapping d'architecture K8s vanilla → OpenShift/OKD | `openshift/` |
+| **GitOps** | Argo CD + pattern App-of-Apps | `gitops/` |
+| **Policy** | Kyverno (gouvernance et sécurité à l'admission) | `policy/` |
 
 ## Démarrage recommandé
 
-### Parcours étape par étape
+### Parcours Shell (KTHW classique)
 
 ```bash
 ./scripts/00-check-prereqs.sh
 ./scripts/01-vagrant-up.sh
-./scripts/10-download-binaries.sh
-./scripts/02-generate-pki.sh
-./scripts/12-generate-kubeconfigs.sh
-./scripts/16-configure-loadbalancer.sh
-./scripts/03-bootstrap-etcd.sh
-./scripts/04-bootstrap-control-plane.sh
-./scripts/05-bootstrap-workers.sh
-./scripts/06-deploy-addons.sh
-./scripts/07-smoke-tests.sh
-./scripts/09-validate-cluster.sh
-```
-
-### Parcours one-shot
-
-```bash
 ./scripts/26-build-platform.sh
 ```
 
-## Carte du dépôt
+### Parcours Ansible (Industrialisation)
 
-- `docs/00-vision` : intention pédagogique et parcours
-- `docs/01-architecture` : architecture globale, control plane, workers, accès, identité
-- `docs/02-concepts` : synthèses par domaine
-- `docs/03-bootstrap` : guide de construction du cluster
+```bash
+cd ansible
+ansible-playbook -i inventories/vagrant/hosts.ini playbooks/build-platform.yml
+```
+
+## Carte du dépôt V39
+
+- `docs/00-vision` : vision, executive summary, carte du dépôt
+- `docs/01-architecture` : architecture globale, OpenShift mapping
+- `docs/02-concepts` : synthèses par domaine, K8s vs OpenShift
+- `docs/03-bootstrap` : guides de construction (shell, ansible, AWX, CI, observability, logging, quality, gitops, policy)
 - `docs/04-diagnostics` : runbooks
-- `docs/05-audit` : checklist, anti-patterns, recommandations
+- `docs/05-audit` : checklists, matrices, audit final
 - `docs/06-diagrams` : schémas Mermaid
-- `docs/07-adr` : décisions d’architecture
-- `docs/08-reference` : commandes et séquences
-- `docs/09-operations` : exploitation et preuves
-- `docs/10-release` : release notes
+- `docs/07-adr` : Décisions d'architecture (ADR 001 à 017)
+- `docs/08-operations` : modèles opérationnels par couche (Day 2)
+- `docs/10-release` : release notes V17 → V39
+- `ansible/` : inventaires, group_vars, rôles, playbooks
+- `awx/` : job templates, workflow templates, inventaires AWX
+- `gitlab/ci/` : stages CI par couche
+- `observability/` : dashboards Grafana JSON
+- `sonarqube/` : configuration SonarQube
+- `openshift/` : mappings d'architecture K8s → OpenShift
+- `gitops/` : manifests Argo CD
+- `policy/` : politiques Kyverno
+- `kubernetes/` : manifests, kubeconfigs, systemd, PKI
+- `scripts/` : scripts d'orchestration technique (00 à 54)
+- `labs/` : exercices pratiques guidés (01 à 38)
 - `vagrant/` : topologie Vagrant
-- `kubernetes/` : manifests, kubeconfigs, unités systemd, configs
-- `scripts/` : orchestration technique
 - `evidence/` : preuves et validations
 
-## Limites encore assumées
+## Limites assumées
 
-La V29 vise une **plateforme locale beaucoup plus construisible**, mais elle reste un dépôt à adapter aux contraintes exactes du poste local :
-- VirtualBox / Vagrant réellement installés ;
-- plugin `vagrant-scp` si nécessaire ;
-- ressources CPU/RAM suffisantes ;
-- éventuels ajustements DNS, certificats et options noyau selon l’OS hôte.
-
-Elle est donc plus proche d’un **build local de bout en bout**, sans prétendre qu’il a été exécuté ici sur de vraies VMs.
-
-
-## V29 additions
-
-This cumulative V29 extends V18 with day-2 operations and release engineering:
-- etcd backup and restore scripts
-- observability baseline deployment
-- local validation and conformance-lite checks
-- reset / destroy / rebuild scripts
-- release packaging and local CI helper
-- operational readiness and recovery documentation
+Ce dépôt vise à fournir une **plateforme locale réaliste**, mais nécessite d'être adapté aux contraintes du poste local (VirtualBox/Vagrant, ressources CPU/RAM suffisantes).
+Il s'agit d'un référentiel d'architecture complet (Architect Edition) conçu pour l'apprentissage, l'audit et la démonstration d'expertise.

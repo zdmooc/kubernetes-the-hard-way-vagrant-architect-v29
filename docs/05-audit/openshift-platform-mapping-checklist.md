@@ -1,0 +1,1 @@
+# OpenShift Platform Mapping Checklist

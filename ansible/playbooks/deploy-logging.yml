@@ -1,0 +1,11 @@
+---
+- name: Deploy Logging Stack (Loki + Promtail)
+  hosts: controller[0]
+  become: true
+  roles:
+    - role: logging
+  tasks:
+    - name: Apply Loki manifest
+      command: kubectl apply -f /tmp/kubernetes/manifests/logging/loki/loki.yaml
+    - name: Apply Promtail manifest
+      command: kubectl apply -f /tmp/kubernetes/manifests/logging/promtail/promtail.yaml

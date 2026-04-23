@@ -1,0 +1,23 @@
+---
+- name: Apply observability namespace manifest
+  command: kubectl apply -f /tmp/kubernetes/manifests/observability/namespace.yaml
+  register: apply_ns
+  changed_when: "'created' in apply_ns.stdout or 'configured' in apply_ns.stdout"
+
+- name: Apply Prometheus manifest
+  command: kubectl apply -f /tmp/kubernetes/manifests/observability/prometheus.yaml
+  register: apply_prom
+  changed_when: "'created' in apply_prom.stdout or 'configured' in apply_prom.stdout"
+
+- name: Wait for Prometheus to be ready
+  command: kubectl wait --for=condition=available deployment/prometheus -n observability --timeout=120s
+  changed_when: false
+
+- name: Apply Grafana manifest
+  command: kubectl apply -f /tmp/kubernetes/manifests/observability/grafana.yaml
+  register: apply_grafana
+  changed_when: "'created' in apply_grafana.stdout or 'configured' in apply_grafana.stdout"
+
+- name: Wait for Grafana to be ready
+  command: kubectl wait --for=condition=available deployment/grafana -n observability --timeout=120s
+  changed_when: false

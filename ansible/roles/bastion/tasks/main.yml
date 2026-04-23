@@ -1,0 +1,63 @@
+---
+- name: Installer les paquets spécifiques au bastion
+  apt:
+    name:
+      - openssh-server
+      - fail2ban
+      - auditd
+      - ufw
+      - htop
+      - rsync
+      - tmux
+    state: present
+    update_cache: yes
+
+- name: Configurer sshd_config pour renforcer la sécurité
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^{{ item.key }}"
+    line: "{{ item.key }} {{ item.value }}"
+    state: present
+  loop:
+    - { key: 'PermitRootLogin', value: 'no' }
+    - { key: 'PasswordAuthentication', value: 'no' }
+    - { key: 'X11Forwarding', value: 'no' }
+    - { key: 'AllowTcpForwarding', value: 'yes' }
+    - { key: 'MaxAuthTries', value: '3' }
+    - { key: 'ClientAliveInterval', value: '300' }
+    - { key: 'ClientAliveCountMax', value: '0' }
+  notify: restart sshd
+
+- name: Configurer UFW (Uncomplicated Firewall) par défaut
+  ufw:
+    state: enabled
+    policy: deny
+    direction: incoming
+
+- name: Autoriser le trafic sortant par défaut
+  ufw:
+    state: enabled
+    policy: allow
+    direction: outgoing
+
+- name: Autoriser les connexions SSH entrantes
+  ufw:
+    rule: allow
+    port: '22'
+    proto: tcp
+
+- name: Activer et démarrer le service fail2ban
+  service:
+    name: fail2ban
+    state: started
+    enabled: yes
+
+- name: Activer et démarrer le service auditd
+  service:
+    name: auditd
+    state: started
+    enabled: yes
+
+- name: Configurer les règles d'audit pour surveiller /etc/passwd
+  command: auditctl -w /etc/passwd -p wa -k passwd_changes
+  ignore_errors: yes
