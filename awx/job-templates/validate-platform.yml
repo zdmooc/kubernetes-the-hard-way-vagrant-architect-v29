@@ -1,1 +1,11 @@
 ---
+name: "validate-platform"
+description: "Job Template for validate-platform"
+job_type: run
+inventory: "Vagrant Inventory"
+project: "Kubernetes The Hard Way"
+playbook: "ansible/playbooks/validate-platform.yml"
+credentials:
+  - "Vagrant Machine Credential"
+become_enabled: true
+verbosity: 1

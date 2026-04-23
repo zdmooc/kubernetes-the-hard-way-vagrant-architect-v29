@@ -1,1 +1,11 @@
 ---
+name: "day2-operations"
+description: "Job Template for day2-operations"
+job_type: run
+inventory: "Vagrant Inventory"
+project: "Kubernetes The Hard Way"
+playbook: "ansible/playbooks/day2-operations.yml"
+credentials:
+  - "Vagrant Machine Credential"
+become_enabled: true
+verbosity: 1

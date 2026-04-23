@@ -1,1 +1,11 @@
 ---
+name: "Quality Governance Workflow"
+description: "Deploy SonarQube and run quality checks"
+organization: "Default"
+workflow_nodes:
+  - identifier: "node_deploy_sonar"
+    unified_job_template: "deploy-quality"
+    success_nodes:
+      - "node_run_scan"
+  - identifier: "node_run_scan"
+    unified_job_template: "run-sonar-scanner"

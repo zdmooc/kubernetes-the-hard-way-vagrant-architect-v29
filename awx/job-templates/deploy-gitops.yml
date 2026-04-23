@@ -1,0 +1,11 @@
+---
+name: "deploy-gitops"
+description: "Job Template for deploy-gitops"
+job_type: run
+inventory: "Vagrant Inventory"
+project: "Kubernetes The Hard Way"
+playbook: "ansible/playbooks/deploy-gitops.yml"
+credentials:
+  - "Vagrant Machine Credential"
+become_enabled: true
+verbosity: 1

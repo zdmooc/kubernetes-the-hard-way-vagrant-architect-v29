@@ -1,1 +1,36 @@
+---
 all:
+  children:
+    bastion:
+      hosts:
+        bastion-0:
+          ansible_host: 10.240.0.10
+    loadbalancer:
+      hosts:
+        lb-0:
+          ansible_host: 10.240.0.15
+    identity:
+      hosts:
+        keycloak-0:
+          ansible_host: 10.240.0.16
+    controller:
+      hosts:
+        controller-0:
+          ansible_host: 10.240.0.20
+        controller-1:
+          ansible_host: 10.240.0.21
+        controller-2:
+          ansible_host: 10.240.0.22
+    worker:
+      hosts:
+        worker-0:
+          ansible_host: 10.240.0.30
+        worker-1:
+          ansible_host: 10.240.0.31
+    kubernetes:
+      children:
+        controller:
+        worker:
+  vars:
+    ansible_user: vagrant
+    ansible_python_interpreter: /usr/bin/python3

@@ -1,1 +1,15 @@
 ---
+name: "Platform Lifecycle Workflow"
+description: "End-to-end build, validate and day2 workflow"
+organization: "Default"
+workflow_nodes:
+  - identifier: "node_build"
+    unified_job_template: "build-platform"
+    success_nodes:
+      - "node_validate"
+  - identifier: "node_validate"
+    unified_job_template: "validate-platform"
+    success_nodes:
+      - "node_day2"
+  - identifier: "node_day2"
+    unified_job_template: "day2-operations"
