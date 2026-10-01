@@ -1,4 +1,4 @@
-username,password,email,groups
-alice,ChangeMe!123,alice@example.local,dev ops
-bob,ChangeMe!123,bob@example.local,ops auditors
-carol,ChangeMe!123,carol@example.local,platform-admins auditors
+username,email,groups
+alice,alice@example.local,dev ops
+bob,bob@example.local,ops auditors
+carol,carol@example.local,platform-admins auditors
