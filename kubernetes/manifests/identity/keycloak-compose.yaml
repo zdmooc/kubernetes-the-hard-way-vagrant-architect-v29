@@ -1,3 +1,4 @@
+# LEGACY_REFERENCE: deep IAM ownership belongs to keycloak-enterprise-roadmap-v7.
 services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.1
@@ -10,6 +11,9 @@ services:
       - --https-certificate-key-file=/opt/keycloak/conf/server.key
     env_file:
       - ../../configs/keycloak.env.example
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: "${KC_BOOTSTRAP_ADMIN_USERNAME:?set at runtime}"
+      KC_BOOTSTRAP_ADMIN_PASSWORD: "${KC_BOOTSTRAP_ADMIN_PASSWORD:?set at runtime}"
     ports:
       - "8080:8080"
       - "8443:8443"
