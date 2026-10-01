@@ -1,89 +1,71 @@
-# Kubernetes The Hard Way with Vagrant — Architect Edition V39
+# Kubernetes The Hard Way with Vagrant — Architect Edition
 
-La **V39** est l'aboutissement cumulatif de toutes les versions précédentes. Elle conserve intégralement le socle d'architecture, d'audit, de sécurité, de bastion, de segmentation réseau et d'OIDC (V17-V29), et y ajoute des couches d'industrialisation complètes pour une exploitation d'entreprise.
+## Statut O7
 
-Le dépôt sert donc à la fois à :
-- **construire Kubernetes à la main avec Vagrant**, composant par composant (approche "Hard Way") ;
-- **expliquer l’architecture**, les flux, le diagnostic, l'audit et les arbitrages ;
-- **industrialiser le déploiement** via Ansible, GitLab CI et AWX ;
-- **opérer la plateforme (Day 2)** avec Observabilité (Prometheus/Grafana), Logging (Loki/Promtail) et Gouvernance (Kyverno, SonarQube, ArgoCD).
+**KUBERNETES INTERNALS / ON-PREM LEARNING SPECIALIST — HARDENING O7**
 
-## Topologie cible
+Rôle canonique :
+
+> Comprendre Kubernetes sous le capot en construisant et diagnostiquant ses composants sur des VM locales.
+
+Ce dépôt porte principalement le bootstrap manuel Vagrant/shell, PKI, kubeconfigs, encryption-at-rest, etcd, control plane, kubelet, kube-proxy, container runtime, CNI, DNS, RBAC/audit, systemd, smoke tests, diagnostic, backup/restore etcd et collecte d'evidence.
+
+Il ne remplace pas :
+- `k8s-openshift-cluster-factory` pour provisioning/lifecycle/Day-2 industriel ;
+- `shared-platform-services-openshift` pour les services techniques communs ;
+- `argocd-expert-pack` pour Argo CD / OpenShift GitOps ;
+- `keycloak-enterprise-roadmap-v7` pour Keycloak/IAM.
+
+Les anciens assets Ansible/AWX/Keycloak/GitOps/observabilité/qualité sont conservés comme patrimoine pédagogique mais ne sont plus propriétaires de ces capacités.
+
+## Frontière de preuve
+
+```text
+README / docs / manifests        = REFERENCE ou IMPLEMENTED
+static CI                        = STATIC_VALIDATED seulement après run vert observé
+Vagrant Kubernetes runtime       = NOT_PROVEN tant qu'un replay actuel n'est pas observé
+HA / failover / DR               = NOT_PROVEN
+OpenShift / RKE2 / cloud         = NOT_CLAIMED dans ce dépôt
+Production                       = NOT_CLAIMED
+```
+
+Un manifest présent dans Git n'est jamais assimilé à une preuve runtime.
+
+## Topologie pédagogique
 
 - `bastion-0`
 - `lb-0`
-- `keycloak-0`
-- `controller-0`
-- `controller-1`
-- `controller-2`
-- `worker-0`
-- `worker-1`
+- `controller-0..2`
+- `worker-0..1`
 
-Cette topologie met en évidence :
-- HA API et quorum etcd,
-- séparation stricte accès / identité / control plane / workers,
-- flux north-south et east-west,
-- modèle d’accès plateforme réaliste d'une architecture entreprise.
+`keycloak-0` reste une extension historique de démonstration OIDC ; l'expertise Keycloak canonique appartient au dépôt spécialiste.
 
-## Parcours disponibles en V39
-
-| Parcours | Description | Répertoire principal |
-| :--- | :--- | :--- |
-| **Shell** | Construction manuelle composant par composant (KTHW original) | `scripts/` |
-| **Ansible** | Déploiement déclaratif et idempotent de l'infrastructure | `ansible/` |
-| **AWX** | Orchestration d'entreprise avec interface web | `awx/` |
-| **GitLab CI** | Pipeline de lint, validation et packaging | `.gitlab-ci.yml`, `gitlab/ci/` |
-| **Observability** | Prometheus + Grafana (métriques) | `kubernetes/manifests/observability/` |
-| **Logging** | Loki + Promtail (logs centralisés) | `kubernetes/manifests/logging/` |
-| **Quality** | SonarQube + Quality Gates | `sonarqube/` |
-| **OpenShift** | Mapping d'architecture K8s vanilla → OpenShift/OKD | `openshift/` |
-| **GitOps** | Argo CD + pattern App-of-Apps | `gitops/` |
-| **Policy** | Kyverno (gouvernance et sécurité à l'admission) | `policy/` |
-
-## Démarrage recommandé
-
-### Parcours Shell (KTHW classique)
+## Parcours cœur
 
 ```bash
 ./scripts/00-check-prereqs.sh
 ./scripts/01-vagrant-up.sh
-./scripts/26-build-platform.sh
+./scripts/10-download-binaries.sh
+./scripts/02-generate-pki.sh
+./scripts/12-generate-kubeconfigs.sh
+./scripts/16-configure-loadbalancer.sh
+./scripts/03-bootstrap-etcd.sh
+./scripts/04-bootstrap-control-plane.sh
+./scripts/05-bootstrap-workers.sh
+./scripts/06-deploy-addons.sh
+./scripts/07-smoke-tests.sh
+./scripts/09-validate-cluster.sh
+./scripts/08-collect-evidence.sh
 ```
 
-### Parcours Ansible (Industrialisation)
+Le raccourci `./scripts/26-build-platform.sh` orchestre le même parcours.
 
-```bash
-cd ansible
-ansible-playbook -i inventories/vagrant/hosts.ini playbooks/build-platform.yml
-```
+## Versions et evidence
 
-## Carte du dépôt V39
+La baseline présente dans `scripts/versions.env` est historique et doit être requalifiée avant toute nouvelle preuve runtime.
 
-- `docs/00-vision` : vision, executive summary, carte du dépôt
-- `docs/01-architecture` : architecture globale, OpenShift mapping
-- `docs/02-concepts` : synthèses par domaine, K8s vs OpenShift
-- `docs/03-bootstrap` : guides de construction (shell, ansible, AWX, CI, observability, logging, quality, gitops, policy)
-- `docs/04-diagnostics` : runbooks
-- `docs/05-audit` : checklists, matrices, audit final
-- `docs/06-diagrams` : schémas Mermaid
-- `docs/07-adr` : Décisions d'architecture (ADR 001 à 017)
-- `docs/08-operations` : modèles opérationnels par couche (Day 2)
-- `docs/10-release` : release notes V17 → V39
-- `ansible/` : inventaires, group_vars, rôles, playbooks
-- `awx/` : job templates, workflow templates, inventaires AWX
-- `gitlab/ci/` : stages CI par couche
-- `observability/` : dashboards Grafana JSON
-- `sonarqube/` : configuration SonarQube
-- `openshift/` : mappings d'architecture K8s → OpenShift
-- `gitops/` : manifests Argo CD
-- `policy/` : politiques Kyverno
-- `kubernetes/` : manifests, kubeconfigs, systemd, PKI
-- `scripts/` : scripts d'orchestration technique (00 à 54)
-- `labs/` : exercices pratiques guidés (01 à 38)
-- `vagrant/` : topologie Vagrant
-- `evidence/` : preuves et validations
-
-## Limites assumées
-
-Ce dépôt vise à fournir une **plateforme locale réaliste**, mais nécessite d'être adapté aux contraintes du poste local (VirtualBox/Vagrant, ressources CPU/RAM suffisantes).
-Il s'agit d'un référentiel d'architecture complet (Architect Edition) conçu pour l'apprentissage, l'audit et la démonstration d'expertise.
+Voir :
+- `docs/governance/O7_OWNERSHIP.md`
+- `docs/governance/CURRENT_BASELINE_2026-10-01.md`
+- `evidence/CLAIM_EVIDENCE_MATRIX.md`
+- `SECURITY.md`
