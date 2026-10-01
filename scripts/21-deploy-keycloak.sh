@@ -3,32 +3,19 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$ROOT_DIR/scripts/lib.sh"
 
-banner "Deploying Keycloak on keycloak-0"
+banner "Keycloak OIDC extension — LEGACY_REFERENCE"
 
 cat <<'MSG'
-This script assumes:
-- Vagrant VM keycloak-0 exists and is reachable from bastion-0 or the host.
-- Podman or Docker will be installed on keycloak-0.
-- TLS files are available under kubernetes/configs/keycloak/tls/.
-- Realm import file is available under kubernetes/configs/keycloak/realm-export.json.
+This extension is retained only to explain Kubernetes OIDC integration.
+Canonical Keycloak/IAM ownership belongs to:
+  zdmooc/keycloak-enterprise-roadmap-v7
 
-Recommended sequence on keycloak-0:
-  sudo apt-get update
-  sudo apt-get install -y podman openssl
-  sudo mkdir -p /opt/kthw-identity
-  sudo cp -r /vagrant/../kubernetes /opt/kthw-identity/
-  cd /opt/kthw-identity/manifests/identity
-  sudo podman compose -f keycloak-compose.yaml up -d
+Before a local replay:
+- provide TLS files locally under kubernetes/configs/keycloak/tls/;
+- export KC_BOOTSTRAP_ADMIN_USERNAME;
+- export KC_BOOTSTRAP_ADMIN_PASSWORD;
+- create any demo-user credentials at runtime through Keycloak;
+- never store or print those values in Git evidence.
 
-Validation:
-  curl -k https://192.168.56.14:8443/realms/kubernetes/.well-known/openid-configuration | jq .
-  curl -k https://192.168.56.14:8443/realms/kubernetes/protocol/openid-connect/certs | jq .
-
-Users:
-  alice / ChangeMe!123
-  bob   / ChangeMe!123
-  carol / ChangeMe!123
+No current Keycloak runtime proof is claimed by this repository.
 MSG
-
-mkdir -p "$ROOT_DIR/evidence/identity"
-cp "$ROOT_DIR/kubernetes/configs/keycloak/realm-export.json" "$ROOT_DIR/evidence/identity/realm-export.captured.json"
