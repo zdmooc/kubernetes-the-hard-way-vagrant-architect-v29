@@ -1,0 +1,92 @@
+name: KTHW Vagrant Static CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install validators
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck ruby python3-pip
+          python3 -m pip install --break-system-packages pyyaml
+
+      - name: Shell syntax
+        run: |
+          find scripts -type f -name '*.sh' -print0 | xargs -0 -n1 bash -n
+          shellcheck -x             scripts/00-check-prereqs.sh             scripts/01-vagrant-up.sh             scripts/02-generate-pki.sh             scripts/03-bootstrap-etcd.sh             scripts/04-bootstrap-control-plane.sh             scripts/05-bootstrap-workers.sh             scripts/06-deploy-addons.sh             scripts/07-smoke-tests.sh             scripts/08-collect-evidence.sh             scripts/09-validate-cluster.sh             scripts/10-download-binaries.sh             scripts/12-generate-kubeconfigs.sh             scripts/16-configure-loadbalancer.sh             scripts/26-build-platform.sh
+
+      - name: Vagrantfile syntax
+        run: ruby -c vagrant/Vagrantfile
+
+      - name: Active YAML and JSON parse
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, yaml
+          roots = [
+              pathlib.Path('kubernetes/configs'),
+              pathlib.Path('kubernetes/manifests'),
+          ]
+          for root in roots:
+              for p in root.rglob('*'):
+                  if not p.is_file():
+                      continue
+                  if p.suffix in {'.yaml', '.yml'}:
+                      with p.open(encoding='utf-8') as f:
+                          list(yaml.safe_load_all(f))
+                  elif p.suffix == '.json':
+                      with p.open(encoding='utf-8') as f:
+                          json.load(f)
+          PY
+
+      - name: Security guard
+        run: |
+          python3 - <<'PY'
+          import pathlib, re, sys
+          roots = [pathlib.Path('scripts'), pathlib.Path('kubernetes'), pathlib.Path('ansible')]
+          bad = []
+          private_key = re.compile(r'BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY')
+          literal_secret = re.compile(
+              r'(?i)(?:password|client_secret|access_token|refresh_token)\s*[:=]\s*["\x27]?'
+              r'(?!\$|\{|<|valueFrom|lookup\()([^\s,"\x27}]+)'
+          )
+          for root in roots:
+              for p in root.rglob('*'):
+                  if not p.is_file():
+                      continue
+                  try:
+                      text = p.read_text(encoding='utf-8')
+                  except UnicodeDecodeError:
+                      continue
+                  if private_key.search(text):
+                      bad.append(f'{p}: private key material')
+                  for n, line in enumerate(text.splitlines(), 1):
+                      if literal_secret.search(line):
+                          bad.append(f'{p}:{n}: literal secret-like assignment')
+          if bad:
+              print('\n'.join(bad))
+              sys.exit(1)
+          print('KTHW_VAGRANT_SECRET_GUARD=PASS')
+          PY
+
+      - name: Version contract
+        shell: bash
+        run: |
+          source scripts/versions.env
+          test "$CRICTL_VERSION" = "$KUBERNETES_VERSION"
+          echo "KTHW_VAGRANT_VERSION_CONTRACT=PASS"
+
+      - name: Truth boundary
+        run: |
+          grep -q 'Vagrant Kubernetes runtime       = NOT_PROVEN' README.md
+          grep -q 'production | NOT_CLAIMED' evidence/CLAIM_EVIDENCE_MATRIX.md
+          echo "KTHW_VAGRANT_TRUTH_BOUNDARY=PASS"
