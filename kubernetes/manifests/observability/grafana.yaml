@@ -1,3 +1,4 @@
+# LEGACY_REFERENCE: shared observability ownership belongs to shared-platform-services-openshift.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -38,7 +39,10 @@ spec:
         image: grafana/grafana:10.0.3
         env:
         - name: GF_SECURITY_ADMIN_PASSWORD
-          value: "admin"
+          valueFrom:
+            secretKeyRef:
+              name: grafana-admin
+              key: admin-password
         - name: GF_USERS_ALLOW_SIGN_UP
           value: "false"
         ports:
