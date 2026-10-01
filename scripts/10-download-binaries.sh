@@ -22,7 +22,6 @@ ETCD_URL="https://github.com/etcd-io/etcd/releases/download/${ETCD_VERSION}/${ET
 RUNC_URL="https://github.com/opencontainers/runc/releases/download/v${RUNC_VERSION}/runc.${ARCH}"
 CNI_ARCHIVE="cni-plugins-${OS}-${ARCH}-${CNI_PLUGINS_VERSION}.tgz"
 CNI_URL="https://github.com/containernetworking/plugins/releases/download/${CNI_PLUGINS_VERSION}/${CNI_ARCHIVE}"
-CRICTL_VERSION="${RUNC_VERSION}"
 CRICTL_ARCHIVE="crictl-${CRICTL_VERSION}-${OS}-${ARCH}.tar.gz"
 CRICTL_URL="https://github.com/kubernetes-sigs/cri-tools/releases/download/v${CRICTL_VERSION}/${CRICTL_ARCHIVE}"
 
