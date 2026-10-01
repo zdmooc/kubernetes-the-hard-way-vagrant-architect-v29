@@ -2729,11 +2729,7 @@ metadata:
 type: Opaque
 stringData:           # stringData : en clair, encodé automatiquement
   username: appuser
-  password: s3cr3t!
-```
-
-### Réalité sur la sécurité des Secrets
-Un Secret Kubernetes n'est pas chiffré par défaut dans etcd, seulement encodé en base64.  
+  password: <runtime-secret>n Secret Kubernetes n'est pas chiffré par défaut dans etcd, seulement encodé en base64.  
 Pour une vraie protection : activer **Encryption at Rest** dans l'API Server.
 
 ```yaml
