@@ -1,5 +1,14 @@
 ---
-- name: Installer Docker pour exécuter Keycloak
+# LEGACY_REFERENCE: canonical Keycloak ownership belongs to keycloak-enterprise-roadmap-v7.
+- name: Require runtime-only Keycloak bootstrap credentials
+  assert:
+    that:
+      - lookup('env', 'KC_BOOTSTRAP_ADMIN_USERNAME') | length > 0
+      - lookup('env', 'KC_BOOTSTRAP_ADMIN_PASSWORD') | length > 0
+    fail_msg: "Inject Keycloak bootstrap credentials through the local environment."
+  no_log: true
+
+- name: Installer Docker pour l'extension OIDC pédagogique
   apt:
     name:
       - docker.io
@@ -19,28 +28,24 @@
     state: directory
     mode: '0755'
 
-- name: Copier le fichier docker-compose.yml pour Keycloak
+- name: Copier la configuration Keycloak de démonstration
   copy:
     dest: /opt/keycloak/docker-compose.yml
     content: |
-      version: '3'
       services:
         keycloak:
-          image: quay.io/keycloak/keycloak:23.0.4
+          image: quay.io/keycloak/keycloak:26.1
           command: start-dev
           environment:
             KC_DB: dev-file
-            KEYCLOAK_ADMIN: admin
-            KEYCLOAK_ADMIN_PASSWORD: admin
+            KC_BOOTSTRAP_ADMIN_USERNAME: "{{ lookup('env', 'KC_BOOTSTRAP_ADMIN_USERNAME') }}"
+            KC_BOOTSTRAP_ADMIN_PASSWORD: "{{ lookup('env', 'KC_BOOTSTRAP_ADMIN_PASSWORD') }}"
             KC_HOSTNAME: keycloak-0.kubernetes.local
-            KC_HTTPS_CERTIFICATE_FILE: /etc/x509/https/tls.crt
-            KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/x509/https/tls.key
           ports:
             - "8080:8080"
             - "8443:8443"
-          volumes:
-            - ./tls:/etc/x509/https:ro
     mode: '0644'
+  no_log: true
 
 - name: Démarrer Keycloak via docker-compose
   command: docker-compose up -d
@@ -48,6 +53,7 @@
     chdir: /opt/keycloak
   register: keycloak_start
   changed_when: "'Creating' in keycloak_start.stdout or 'Starting' in keycloak_start.stdout"
+  no_log: true
 
 - name: Attendre que Keycloak soit prêt
   wait_for:
