@@ -6,45 +6,17 @@
   "sslRequired": "external",
   "roles": {
     "realm": [
-      {
-        "name": "dev"
-      },
-      {
-        "name": "ops"
-      },
-      {
-        "name": "auditors"
-      },
-      {
-        "name": "platform-admins"
-      }
+      {"name": "dev"},
+      {"name": "ops"},
+      {"name": "auditors"},
+      {"name": "platform-admins"}
     ]
   },
   "groups": [
-    {
-      "name": "dev",
-      "realmRoles": [
-        "dev"
-      ]
-    },
-    {
-      "name": "ops",
-      "realmRoles": [
-        "ops"
-      ]
-    },
-    {
-      "name": "auditors",
-      "realmRoles": [
-        "auditors"
-      ]
-    },
-    {
-      "name": "platform-admins",
-      "realmRoles": [
-        "platform-admins"
-      ]
-    }
+    {"name": "dev", "realmRoles": ["dev"]},
+    {"name": "ops", "realmRoles": ["ops"]},
+    {"name": "auditors", "realmRoles": ["auditors"]},
+    {"name": "platform-admins", "realmRoles": ["platform-admins"]}
   ],
   "clients": [
     {
@@ -53,101 +25,16 @@
       "enabled": true,
       "protocol": "openid-connect",
       "publicClient": true,
-      "redirectUris": [
-        "http://localhost:8000/*",
-        "http://127.0.0.1:8000/*"
-      ],
-      "webOrigins": [
-        "+"
-      ],
-      "directAccessGrantsEnabled": true,
+      "redirectUris": ["http://localhost:8000/*", "http://127.0.0.1:8000/*"],
+      "webOrigins": ["+"],
+      "directAccessGrantsEnabled": false,
       "standardFlowEnabled": true,
-      "defaultClientScopes": [
-        "profile",
-        "email",
-        "roles",
-        "groups"
-      ],
-      "protocolMappers": [
-        {
-          "name": "preferred username",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-property-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "username",
-            "claim.name": "preferred_username",
-            "jsonType.label": "String",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true"
-          }
-        },
-        {
-          "name": "groups",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-group-membership-mapper",
-          "consentRequired": false,
-          "config": {
-            "full.path": "false",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true",
-            "claim.name": "groups",
-            "jsonType.label": "String"
-          }
-        }
-      ]
+      "defaultClientScopes": ["profile", "email", "roles", "groups"]
     }
   ],
   "users": [
-    {
-      "username": "alice",
-      "enabled": true,
-      "email": "alice@example.local",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "ChangeMe!123",
-          "temporary": false
-        }
-      ],
-      "groups": [
-        "dev",
-        "ops"
-      ]
-    },
-    {
-      "username": "bob",
-      "enabled": true,
-      "email": "bob@example.local",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "ChangeMe!123",
-          "temporary": false
-        }
-      ],
-      "groups": [
-        "ops",
-        "auditors"
-      ]
-    },
-    {
-      "username": "carol",
-      "enabled": true,
-      "email": "carol@example.local",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "ChangeMe!123",
-          "temporary": false
-        }
-      ],
-      "groups": [
-        "platform-admins",
-        "auditors"
-      ]
-    }
+    {"username": "alice", "enabled": true, "email": "alice@example.local", "groups": ["dev", "ops"]},
+    {"username": "bob", "enabled": true, "email": "bob@example.local", "groups": ["ops", "auditors"]},
+    {"username": "carol", "enabled": true, "email": "carol@example.local", "groups": ["platform-admins", "auditors"]}
   ]
 }
