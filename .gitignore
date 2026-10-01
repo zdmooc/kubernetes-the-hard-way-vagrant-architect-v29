@@ -2,3 +2,14 @@
 *.log
 *.tmp
 *.bak
+.env
+.env.*
+artifacts/
+kubernetes/kubeconfigs/generated/
+kubernetes/pki/*.pem
+kubernetes/pki/*.key
+kubernetes/pki/*.csr
+kubernetes/pki/*.srl
+kubernetes/configs/keycloak/tls/
+evidence/command-outputs/
+evidence/identity/*.captured.json
