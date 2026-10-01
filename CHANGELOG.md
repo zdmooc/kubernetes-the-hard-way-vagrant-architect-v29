@@ -1,5 +1,15 @@
 # Changelog
 
+## O7 — 2026-10-01
+- Recentrage canonique sur les internals Kubernetes et le parcours Vagrant.
+- Frontières explicites avec Cluster Factory, Shared Platform Services, Argo CD et Keycloak.
+- Suppression des credentials de démonstration des surfaces actives et durcissement du .gitignore.
+- Correction du contrat cri-tools : `CRICTL_VERSION=v1.30.0` au lieu d'un couplage erroné à runc.
+- Baseline Kubernetes 1.30 classée `REQUALIFICATION_REQUIRED` ; aucune promotion runtime sans replay.
+- Ajout d'une Claim/Evidence Matrix et d'une CI GitHub statique.
+- Run statique observé : `36890689798` = SUCCESS.
+- Runtime Vagrant/Kubernetes : `NOT_PROVEN`.
+
 ## V17
 - Consolidation finale de cohérence : README, ADR, labs, notes de release et scripts cœur renforcés.
 - Renumérotation des ADR et des labs pour supprimer les doublons.
