@@ -69,3 +69,14 @@ Voir :
 - `docs/governance/CURRENT_BASELINE_2026-10-01.md`
 - `evidence/CLAIM_EVIDENCE_MATRIX.md`
 - `SECURITY.md`
+
+
+## D-095 — Infrastructure evidence replay
+
+This repository is the specialist lab for **INFRA-2 Virtualisation + Linux + Ansible**.
+
+Prepared assets:
+- `docs/governance/D095_INFRA_REPLAY_PLAN.md`;
+- `scripts/d095-infra-evidence.sh`.
+
+Current claim remains **RUNTIME NOT_PROVEN** until a fresh local replay is observed. The preflight script captures tooling, Vagrant state, Ansible inventory and syntax evidence but deliberately does not promote runtime by itself.
